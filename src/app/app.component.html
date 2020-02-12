@@ -1,36 +1,23 @@
 <div class="container">
   <div class="row mt-5">
     <div class="col-sm-12">
-      <div class="mt-2">
-        <dx-data-grid
-          id="gridContainer2"
-          [dataSource]="customers"
-          [columns]="['CompanyName', 'City', 'State', 'Phone', 'Fax', 'Age']"
-          [showBorders]="true"
-          (onContextMenuPreparing)="addMenuItems($event)">>
-        </dx-data-grid>
-      </div>
-    </div>
-  </div>
-  <hr/>
-  <div class="row mt-5">
-    <div class="col-sm-12">
       <div class="mt-2"><a class="btn btn-info btn-sm" style="color:#fff;float: right !important"
                            onclick="window.location.reload()">refresh</a></div>
       <div class="mt-2">
-        <dx-data-grid id="gridContainer"
+        <dx-data-grid #dataGrid id="gridContainer"
                       [dataSource]="orders"
                       [allowColumnResizing]="true"
                       [allowColumnReordering]="true"
                       [showBorders]="true"
                       keyExpr="ID"
-                      (onContextMenuPreparing)="addMenuItems($event)">>
+                      (onContextMenuPreparing)="addMenuItems($event)">
 
           <dxo-selection mode="single"></dxo-selection>
           <dxo-filter-row [visible]="true"></dxo-filter-row>
           <dxo-group-panel [visible]="true"></dxo-group-panel>
-          <dxo-state-storing [enabled]="true" type="custom" storageKey="storage"
-                             [customSave]="SaveState"></dxo-state-storing>
+          <dxo-state-storing [enabled]="true"
+                             type="custom" [customLoad]="loadState"
+          ></dxo-state-storing>
           <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[5, 10, 20]"></dxo-pager>
 
           <dxi-column dataField="OrderNumber" [width]="130" caption="Invoice Number"></dxi-column>
@@ -40,8 +27,15 @@
           <dxi-column dataField="CustomerStoreCity" caption="City"></dxi-column>
           <dxi-column dataField="CustomerStoreState" caption="State" [groupIndex]="0"></dxi-column>
 
+          <dxo-summary>
+            <dxi-total-item *ngFor="let summaryItem of summaryFields"
+                            [column]="summaryItem.dataField"
+                            [summaryType]="summaryItem.type">
+            </dxi-total-item>
+          </dxo-summary>
         </dx-data-grid>
       </div>
+      <p><button type="button" (click)="test()">Test</button></p>
     </div>
   </div>
 </div>
