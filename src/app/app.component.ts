@@ -101,7 +101,12 @@ export class AppComponent {
         type: columnDataFieldType
       });
     } else {
-      console.log(this.summaryFields.filter(f => f.dataField === exists.dataField && f.type !== exists.type));
+      function onlyUnique(value, index, self) {
+        return self.indexOf(value) === index;
+      }
+
+      this.summaryFields = [...this.summaryFields.filter(f => f.dataField !== exists.dataField), ...this.summaryFields.filter(f => f.type !== exists.type)].filter(onlyUnique);
+      console.log(this.summaryFields);
     }
   }
 }
