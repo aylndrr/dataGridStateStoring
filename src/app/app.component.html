@@ -1,7 +1,6 @@
-<div class="container">
-  <div class="row mt-5">
+<div class="container  mt-5">
+  <div class="row">
     <div class="col-sm-12">
-      <div class="mt-2">
         <dx-data-grid #dataGrid id="gridContainer"
                       [dataSource]="orders"
                       [allowColumnResizing]="true"
@@ -28,7 +27,7 @@
             </dxi-total-item>
           </dxo-summary>
         </dx-data-grid>
-      </div>
+
       <hr/>
       <p>
         <button type="button" class="btn btn-warning" (click)="test()">Test</button>
@@ -40,9 +39,9 @@
   [width]="500"
   [height]="350"
   [showTitle]="true"
-  title="Grid View Options"
+  title="Görünüm Seç"
   [dragEnabled]="false"
-  [closeOnOutsideClick]="true"
+  [closeOnOutsideClick]="false"
   [(visible)]="viewPopupVisible">
   <div *dxTemplate="let data of 'content'">
     <div class="dx-fieldset">
@@ -56,7 +55,7 @@
             placeholder="Select a view that will applied ...">
           </dx-drop-down-box>
         </div>
-      </div><br/>
+      </div>
       <div class="dx-field">
         <button class="btn btn-outline-primary btn-sm" style="float: right"><i class="glyphicon glyphicon-saved"></i>Apply</button>
       </div>
@@ -64,17 +63,17 @@
   </div>
 </dx-popup>
 <dx-popup
-  [width]="300"
-  [height]="150"
+  [width]="500"
+  [height]="350"
   [showTitle]="true"
-  title="Grid View Saving"
+  title="Görünüm Kaydet"
   [dragEnabled]="false"
-  [closeOnOutsideClick]="true"
+  [closeOnOutsideClick]="false"
   [(visible)]="savePopupVisible">
   <div *dxTemplate="let data of 'content'">
     <div class="dx-fieldset">
       <div class="dx-field">
-        <div class="dx-field-value" style="width: 100%;">
+        <div class="dx-field-value">
 
         </div>
       </div><br/>

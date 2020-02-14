@@ -17,8 +17,14 @@ export class GridState {
   StateData: string;
 }
 
-const toolbarButtons = [
-  {name: 'Görünüm kaydet', value: 1, icon: 'save'},
+export class ToolbarButtons {
+  name: string;
+  value: number;
+  icon: string;
+}
+
+export const toolbarButtons = [
+  {name: 'Görünüm kaydet', value: 1, icon: 'save' },
   {name: 'Görünüm seç', value: 2, icon: 'mediumiconslayout'}
 ];
 
@@ -259,7 +265,7 @@ export class Service {
     return gridStates;
   }
 
-  getToolbarButtons(): string[] {
+  getToolbarButtons() {
     return toolbarButtons;
   }
 }

@@ -1,5 +1,5 @@
 import {Component, ViewChild} from '@angular/core';
-import {GridState, Order, Service} from './app.service';
+import {GridState, Order, Service, ToolbarButtons} from './app.service';
 import {DxDataGridComponent} from 'devextreme-angular';
 
 export interface FooterSummaryColumn {
@@ -23,7 +23,7 @@ export class AppComponent {
   orders: Order[];
   summaryFields: FooterSummaryColumn[] = [];
   dxSelectItems: GridState[] = [];
-  toolbarButtons: string[];
+  toolbarButtons: ToolbarButtons[];
   @ViewChild('dataGrid', {static: false}) dataGrid: DxDataGridComponent;
 
   constructor(private service: Service) {
@@ -38,7 +38,7 @@ export class AppComponent {
     console.log(this.gridState);
     this.summaryFields = this.gridState.footerGroups;
     return this.gridState;
-  };
+  }
 
   test() {
     const dataGridState: any = this.dataGrid.instance.state();
@@ -48,7 +48,7 @@ export class AppComponent {
 
   saveState = (state) => {
     // console.log(state);
-  };
+  }
 
   addMenuItems($event: any) {
     if ($event.target === 'header') {
@@ -120,25 +120,19 @@ export class AppComponent {
         icon: 'overflow',
         showArrowIcon: false,
         useSelectMode: false,
-        items: this.toolbarButtons
+        items: this.toolbarButtons,
+        displayExpr: 'name',
+        dropDownOptions: {width: 200, position: {my: 'top', at: 'bottom left', of: '.dx-dropdownbutton', offset: {x: -60, y: 1}}},
+        onItemClick: this.onItemClick.bind(this)
       }
     });
   }
 
-  showViewPopup() {
-    console.log('asd');
-    this.viewPopupVisible = true;
-  }
-
-  showSavePopup() {
-    console.log('das');
-    this.savePopupVisible = true;
-  }
-
-  onItemClick(e) {
-    if (e.itemData.name === 'Görünüm kaydet') {
+  onItemClick($event) {
+    console.log($event.itemData.name);
+    if ($event.itemData.value === 1) {
       this.savePopupVisible = true;
-    } else if (e.itemData.name === 'Görünüm seç') {
+    } else if ($event.itemData.value === 2) {
       this.viewPopupVisible = true;
     }
   }
