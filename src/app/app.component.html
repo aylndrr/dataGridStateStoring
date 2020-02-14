@@ -1,8 +1,6 @@
 <div class="container">
   <div class="row mt-5">
     <div class="col-sm-12">
-      <div class="mt-2"><a class="btn btn-info btn-sm" style="color:#fff;float: right !important"
-                           onclick="window.location.reload()">refresh</a></div>
       <div class="mt-2">
         <dx-data-grid #dataGrid id="gridContainer"
                       [dataSource]="orders"
@@ -10,23 +8,19 @@
                       [allowColumnReordering]="true"
                       [showBorders]="true"
                       keyExpr="ID"
-                      (onContextMenuPreparing)="addMenuItems($event)">
-
+                      (onContextMenuPreparing)="addMenuItems($event)"
+                      (onToolbarPreparing)="gridToolbarPreparing($event)">
           <dxo-selection mode="single"></dxo-selection>
           <dxo-filter-row [visible]="true"></dxo-filter-row>
           <dxo-group-panel [visible]="true"></dxo-group-panel>
-          <dxo-state-storing [enabled]="true"
-                             type="custom" [customLoad]="loadState"
-          ></dxo-state-storing>
+          <dxo-state-storing [enabled]="true" type="custom" [customLoad]="loadState"></dxo-state-storing>
           <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[5, 10, 20]"></dxo-pager>
-
           <dxi-column dataField="OrderNumber" [width]="130" caption="Invoice Number"></dxi-column>
           <dxi-column dataField="OrderDate" sortOrder="desc" dataType="date"></dxi-column>
           <dxi-column dataField="SaleAmount" alignment="right" format="currency"></dxi-column>
           <dxi-column dataField="Employee"></dxi-column>
           <dxi-column dataField="CustomerStoreCity" caption="City"></dxi-column>
           <dxi-column dataField="CustomerStoreState" caption="State" [groupIndex]="0"></dxi-column>
-
           <dxo-summary>
             <dxi-total-item *ngFor="let summaryItem of summaryFields"
                             [column]="summaryItem.dataField"
@@ -35,10 +29,59 @@
           </dxo-summary>
         </dx-data-grid>
       </div>
-      <p><button type="button" (click)="test()">Test</button></p>
+      <hr/>
+      <p>
+        <button type="button" class="btn btn-warning" (click)="test()">Test</button>
+      </p>
     </div>
   </div>
 </div>
+<dx-popup
+  [width]="500"
+  [height]="350"
+  [showTitle]="true"
+  title="Grid View Options"
+  [dragEnabled]="false"
+  [closeOnOutsideClick]="true"
+  [(visible)]="viewPopupVisible">
+  <div *dxTemplate="let data of 'content'">
+    <div class="dx-fieldset">
+      <div class="dx-field">
+        <div class="dx-field-value" style="width: 100%;">
+          <dx-drop-down-box
+            [(value)]="dropdownValue"
+            [dataSource]="dxSelectItems"
+            valueExpr="State"
+            displayExpr="Description"
+            placeholder="Select a view that will applied ...">
+          </dx-drop-down-box>
+        </div>
+      </div><br/>
+      <div class="dx-field">
+        <button class="btn btn-outline-primary btn-sm" style="float: right"><i class="glyphicon glyphicon-saved"></i>Apply</button>
+      </div>
+    </div>
+  </div>
+</dx-popup>
+<dx-popup
+  [width]="300"
+  [height]="150"
+  [showTitle]="true"
+  title="Grid View Saving"
+  [dragEnabled]="false"
+  [closeOnOutsideClick]="true"
+  [(visible)]="savePopupVisible">
+  <div *dxTemplate="let data of 'content'">
+    <div class="dx-fieldset">
+      <div class="dx-field">
+        <div class="dx-field-value" style="width: 100%;">
 
-
+        </div>
+      </div><br/>
+      <div class="dx-field">
+        <button class="btn btn-outline-secondary btn-sm" style="float: right"><i class="glyphicon glyphicon-saved"></i>Save</button>
+      </div>
+    </div>
+  </div>
+</dx-popup>
 <router-outlet></router-outlet>

@@ -12,8 +12,17 @@ export class Order {
   Employee: string;
 }
 
+export class GridState {
+  Description: string;
+  StateData: string;
+}
 
-const orders: Order[] = [{
+const toolbarButtons = [
+  {name: 'Görünüm kaydet', value: 1, icon: 'save'},
+  {name: 'Görünüm seç', value: 2, icon: 'mediumiconslayout'}
+];
+
+export const orders: Order[] = [{
   ID: 1,
   OrderNumber: 35703,
   OrderDate: new Date(2014, 3, 10),
@@ -235,10 +244,22 @@ const orders: Order[] = [{
   Employee: 'Clark Morgan'
 }];
 
+export const gridStates: GridState[] = [{
+  Description: 'Default View',
+  StateData: '{"columns":[{"visibleIndex":1,"dataField":"OrderNumber","dataType":"number","width":130,"visible":true},{"visibleIndex":0,"dataField":"OrderDate","dataType":"date","visible":true,"sortOrder":"desc","sortIndex":0},{"visibleIndex":3,"dataField":"SaleAmount","dataType":"number","visible":true},{"visibleIndex":2,"dataField":"Employee","dataType":"string","visible":true},{"visibleIndex":4,"dataField":"CustomerStoreCity","dataType":"string","visible":true},{"visibleIndex":5,"dataField":"CustomerStoreState","dataType":"string","visible":true,"groupIndex":0}],"allowedPageSizes":[5,10,20],"filterPanel":{"filterEnabled":true},"filterValue":null,"searchText":"","pageIndex":0,"pageSize":20,"footerGroups":[]}'
+}];
 
 @Injectable()
 export class Service {
   getOrders() {
     return orders;
+  }
+
+  getGridStates() {
+    return gridStates;
+  }
+
+  getToolbarButtons(): string[] {
+    return toolbarButtons;
   }
 }
