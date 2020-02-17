@@ -48,7 +48,7 @@ export interface GridStates {
   providers: [Service]
 })
 
-export class AppComponent implements OnInit, AfterViewInit {
+export class AppComponent {
 
   gridViewSaveForm: FormGroup;
   // gridStateRemote: string = '{"columns":[{"visibleIndex":1,"dataField":"OrderNumber","dataType":"number","width":130,"visible":true},{"visibleIndex":0,"dataField":"OrderDate","dataType":"date","visible":true,"sortOrder":"desc","sortIndex":0},{"visibleIndex":3,"dataField":"SaleAmount","dataType":"number","visible":true},{"visibleIndex":4,"dataField":"Employee","dataType":"string","visible":true},{"visibleIndex":5,"dataField":"CustomerStoreCity","dataType":"string","visible":true},{"visibleIndex":5,"dataField":"CustomerStoreState","dataType":"string","visible":true,"groupIndex":0}],"allowedPageSizes":[5,10,20],"filterPanel":{"filterEnabled":true},"filterValue":null,"searchText":"","pageIndex":0,"pageSize":20,"footerGroups":[]}';
@@ -80,10 +80,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       description: ['']
     });
   }
-
-  ngOnInit(): void {
-  }
-
   get gridViewSaveFormHolder() {
     return this.gridViewSaveForm.controls;
   }
@@ -215,14 +211,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     const stateId = this.selectBox.value;
 
     this.currentGridState = this.gridStates.find(x => x.stateId === stateId).stateData;
-    this.dataGrid.stateStoringChange.emit();
-    this.dataGrid.stateStoringChange.next();
-    this.dataGrid.instance.repaint();
+    this.dataGrid.instance.state(this.currentGridState);
     console.log(this.currentGridState);
     // this.loadState(this.currentGridState);
     this.viewPopupVisible = false;
-  }
-
-  ngAfterViewInit(): void {
   }
 }
