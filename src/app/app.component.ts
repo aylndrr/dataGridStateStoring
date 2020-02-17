@@ -49,9 +49,7 @@ export interface GridStates {
 })
 
 export class AppComponent {
-
   gridViewSaveForm: FormGroup;
-  // gridStateRemote: string = '{"columns":[{"visibleIndex":1,"dataField":"OrderNumber","dataType":"number","width":130,"visible":true},{"visibleIndex":0,"dataField":"OrderDate","dataType":"date","visible":true,"sortOrder":"desc","sortIndex":0},{"visibleIndex":3,"dataField":"SaleAmount","dataType":"number","visible":true},{"visibleIndex":4,"dataField":"Employee","dataType":"string","visible":true},{"visibleIndex":5,"dataField":"CustomerStoreCity","dataType":"string","visible":true},{"visibleIndex":5,"dataField":"CustomerStoreState","dataType":"string","visible":true,"groupIndex":0}],"allowedPageSizes":[5,10,20],"filterPanel":{"filterEnabled":true},"filterValue":null,"searchText":"","pageIndex":0,"pageSize":20,"footerGroups":[]}';
 
   orders: Order[];
 
@@ -80,6 +78,7 @@ export class AppComponent {
       description: ['']
     });
   }
+
   get gridViewSaveFormHolder() {
     return this.gridViewSaveForm.controls;
   }
@@ -87,11 +86,11 @@ export class AppComponent {
   loadState = () => {
     this.summaryFields = this.currentGridState.footerGroups;
     return this.currentGridState;
-  }
+  };
 
   saveState = (state) => {
     console.log(state);
-  }
+  };
 
   addMenuItems($event: any) {
     if ($event.target === 'header') {
