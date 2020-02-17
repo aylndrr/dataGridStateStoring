@@ -1,10 +1,44 @@
-import {Component, ViewChild} from '@angular/core';
-import {GridState, Order, Service, ToolbarButtons} from './app.service';
-import {DxDataGridComponent} from 'devextreme-angular';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {Order, Service, ToolbarButtons} from './app.service';
+import {DxDataGridComponent, DxSelectBoxComponent} from 'devextreme-angular';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+
+export interface GridState {
+  columns: Column[];
+  allowedPageSizes: number[];
+  filterPanel: FilterPanel;
+  filterValue: null;
+  searchText: string;
+  pageIndex: number;
+  pageSize: number;
+  footerGroups: FooterSummaryColumn[];
+}
+
+export interface Column {
+  visibleIndex: number;
+  dataField: string;
+  dataType: string;
+  width?: number;
+  visible: boolean;
+  sortOrder?: string;
+  sortIndex?: number;
+  groupIndex?: number;
+}
+
+export interface FilterPanel {
+  filterEnabled: boolean;
+}
 
 export interface FooterSummaryColumn {
   dataField: string;
   type: 'sum' | 'min' | 'max' | 'avg' | 'count';
+}
+
+export interface GridStates {
+  stateId: number; // ~~(Math.random() * 100) + 1
+  stateName: string;
+  description: string;
+  stateData: GridState;
 }
 
 @Component({
@@ -14,40 +48,53 @@ export interface FooterSummaryColumn {
   providers: [Service]
 })
 
-export class AppComponent {
-  gridStateRemote: string = '{"columns":[{"visibleIndex":1,"dataField":"OrderNumber","dataType":"number","width":130,"visible":true},{"visibleIndex":0,"dataField":"OrderDate","dataType":"date","visible":true,"sortOrder":"desc","sortIndex":0},{"visibleIndex":3,"dataField":"SaleAmount","dataType":"number","visible":true},{"visibleIndex":2,"dataField":"Employee","dataType":"string","visible":true},{"visibleIndex":4,"dataField":"CustomerStoreCity","dataType":"string","visible":true},{"visibleIndex":5,"dataField":"CustomerStoreState","dataType":"string","visible":true,"groupIndex":0}],"allowedPageSizes":[5,10,20],"filterPanel":{"filterEnabled":true},"filterValue":null,"searchText":"","pageIndex":0,"pageSize":20,"footerGroups":[{"dataField":"SaleAmount","type":"sum"},{"dataField":"SaleAmount","type":"count"},{"dataField":"CustomerStoreCity","type":"count"}]}';
-  gridState: any;
-  viewPopupVisible = false;
-  savePopupVisible = false;
-  dropdownValue: string;
+export class AppComponent implements OnInit, AfterViewInit {
+
+  gridViewSaveForm: FormGroup;
+  // gridStateRemote: string = '{"columns":[{"visibleIndex":1,"dataField":"OrderNumber","dataType":"number","width":130,"visible":true},{"visibleIndex":0,"dataField":"OrderDate","dataType":"date","visible":true,"sortOrder":"desc","sortIndex":0},{"visibleIndex":3,"dataField":"SaleAmount","dataType":"number","visible":true},{"visibleIndex":4,"dataField":"Employee","dataType":"string","visible":true},{"visibleIndex":5,"dataField":"CustomerStoreCity","dataType":"string","visible":true},{"visibleIndex":5,"dataField":"CustomerStoreState","dataType":"string","visible":true,"groupIndex":0}],"allowedPageSizes":[5,10,20],"filterPanel":{"filterEnabled":true},"filterValue":null,"searchText":"","pageIndex":0,"pageSize":20,"footerGroups":[]}';
+
   orders: Order[];
+
+  currentGridState: GridState;
+  gridStates: GridStates[] = [];
+
   summaryFields: FooterSummaryColumn[] = [];
-  dxSelectItems: GridState[] = [];
   toolbarButtons: ToolbarButtons[];
   @ViewChild('dataGrid', {static: false}) dataGrid: DxDataGridComponent;
+  @ViewChild('selectBox', {static: false}) selectBox: DxSelectBoxComponent;
 
-  constructor(private service: Service) {
+  viewPopupVisible = false;
+  savePopupVisible = false;
+  alertSaveProcess = false;
+
+  constructor(private service: Service, private formBuilder: FormBuilder) {
     this.orders = service.getOrders();
-    this.gridState = JSON.parse(this.gridStateRemote);
-    this.dxSelectItems = service.getGridStates();
-    this.dropdownValue = this.dxSelectItems[0].Description;
     this.toolbarButtons = service.getToolbarButtons();
+
+    // tslint:disable-next-line:max-line-length
+    this.gridStates = JSON.parse('[{"stateId":46,"stateName":"City Sonda","description":"asd","stateData":{"columns":[{"visibleIndex":1,"dataField":"OrderNumber","dataType":"number","width":130,"visible":true},{"visibleIndex":0,"dataField":"OrderDate","dataType":"date","visible":true,"sortOrder":"desc","sortIndex":0},{"visibleIndex":2,"dataField":"SaleAmount","dataType":"number","visible":true},{"visibleIndex":3,"dataField":"Employee","dataType":"string","visible":true},{"visibleIndex":5,"dataField":"CustomerStoreCity","dataType":"string","visible":true},{"visibleIndex":4,"dataField":"CustomerStoreState","dataType":"string","visible":true,"groupIndex":0}],"allowedPageSizes":[5,10,20],"filterPanel":{"filterEnabled":true},"filterValue":null,"searchText":"","pageIndex":0,"pageSize":20,"footerGroups":[]}},{"stateId":79,"stateName":"City Başta","description":"asd","stateData":{"columns":[{"visibleIndex":2,"dataField":"OrderNumber","dataType":"number","width":130,"visible":true},{"visibleIndex":1,"dataField":"OrderDate","dataType":"date","visible":true,"sortOrder":"desc","sortIndex":0},{"visibleIndex":3,"dataField":"SaleAmount","dataType":"number","visible":true},{"visibleIndex":4,"dataField":"Employee","dataType":"string","visible":true},{"visibleIndex":0,"dataField":"CustomerStoreCity","dataType":"string","visible":true},{"visibleIndex":5,"dataField":"CustomerStoreState","dataType":"string","visible":true,"groupIndex":0}],"allowedPageSizes":[5,10,20],"filterPanel":{"filterEnabled":true},"filterValue":null,"searchText":"","pageIndex":0,"pageSize":20,"footerGroups":[]}}]');
+    this.currentGridState = this.gridStates[0].stateData;
+
+    this.gridViewSaveForm = this.formBuilder.group({
+      stateName: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]],
+      description: ['']
+    });
+  }
+
+  ngOnInit(): void {
+  }
+
+  get gridViewSaveFormHolder() {
+    return this.gridViewSaveForm.controls;
   }
 
   loadState = () => {
-    console.log(this.gridState);
-    this.summaryFields = this.gridState.footerGroups;
-    return this.gridState;
-  }
-
-  test() {
-    const dataGridState: any = this.dataGrid.instance.state();
-    dataGridState.footerGroups = [...this.summaryFields];
-    console.log(JSON.stringify(dataGridState));
+    this.summaryFields = this.currentGridState.footerGroups;
+    return this.currentGridState;
   }
 
   saveState = (state) => {
-    // console.log(state);
+    console.log(state);
   }
 
   addMenuItems($event: any) {
@@ -123,17 +170,59 @@ export class AppComponent {
         items: this.toolbarButtons,
         displayExpr: 'name',
         dropDownOptions: {width: 200, position: {my: 'top', at: 'bottom left', of: '.dx-dropdownbutton', offset: {x: -60, y: 1}}},
-        onItemClick: this.onItemClick.bind(this)
+        onItemClick: this.onItemClickGridAppearance.bind(this)
       }
     });
   }
 
-  onItemClick($event) {
+  onItemClickGridAppearance($event) {
     console.log($event.itemData.name);
     if ($event.itemData.value === 1) {
       this.savePopupVisible = true;
+      this.alertSaveProcess = false;
+      this.gridViewSaveFormHolder.stateName.reset();
     } else if ($event.itemData.value === 2) {
       this.viewPopupVisible = true;
     }
+  }
+
+  Cancel() {
+    if (this.viewPopupVisible === true) {
+      this.viewPopupVisible = false;
+    } else if (this.savePopupVisible === true) {
+      this.savePopupVisible = false;
+    }
+  }
+
+  viewStateSave() {
+    const dataGridState: GridState = this.dataGrid.instance.state();
+    dataGridState.footerGroups = [...this.summaryFields];
+
+    const state: GridStates = {
+      stateId: (~~(Math.random() * 100) + 1),
+      stateName: this.gridViewSaveFormHolder.stateName.value,
+      description: 'asd',
+      stateData: dataGridState
+    };
+
+    this.gridStates.push(state);
+    this.alertSaveProcess = true;
+
+    console.log(JSON.stringify(this.gridStates));
+  }
+
+  viewStateSelect() {
+    const stateId = this.selectBox.value;
+
+    this.currentGridState = this.gridStates.find(x => x.stateId === stateId).stateData;
+    this.dataGrid.stateStoringChange.emit();
+    this.dataGrid.stateStoringChange.next();
+    this.dataGrid.instance.repaint();
+    console.log(this.currentGridState);
+    // this.loadState(this.currentGridState);
+    this.viewPopupVisible = false;
+  }
+
+  ngAfterViewInit(): void {
   }
 }

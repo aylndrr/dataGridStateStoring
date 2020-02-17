@@ -1,8 +1,9 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import {DxDataGridModule, DxDropDownBoxModule, DxPopupModule, DxSelectBoxModule} from 'devextreme-angular';
+import {DxButtonModule, DxDataGridModule, DxDropDownBoxModule, DxFormModule, DxPopupModule, DxSelectBoxModule} from 'devextreme-angular';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import {ReactiveFormsModule} from '@angular/forms';
 
 
 @NgModule({
@@ -15,7 +16,10 @@ import { AppComponent } from './app.component';
     DxDataGridModule,
     DxPopupModule,
     DxSelectBoxModule,
-    DxDropDownBoxModule
+    DxDropDownBoxModule,
+    DxButtonModule,
+    DxFormModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

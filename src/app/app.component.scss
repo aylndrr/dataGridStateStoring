@@ -9,5 +9,14 @@
 ::ng-deep #descContainer  a:hover {
   text-decoration: none;
 }
-
-
+.left{
+  float: left !important;
+}
+.right{
+  float: right !important;
+}
+.inner{
+  display: inline-block;
+  width: 100%;
+  margin: 15px 0px;
+}

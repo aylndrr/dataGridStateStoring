@@ -1,43 +1,38 @@
 <div class="container  mt-5">
   <div class="row">
     <div class="col-sm-12">
-        <dx-data-grid #dataGrid id="gridContainer"
-                      [dataSource]="orders"
-                      [allowColumnResizing]="true"
-                      [allowColumnReordering]="true"
-                      [showBorders]="true"
-                      keyExpr="ID"
-                      (onContextMenuPreparing)="addMenuItems($event)"
-                      (onToolbarPreparing)="gridToolbarPreparing($event)">
-          <dxo-selection mode="single"></dxo-selection>
-          <dxo-filter-row [visible]="true"></dxo-filter-row>
-          <dxo-group-panel [visible]="true"></dxo-group-panel>
-          <dxo-state-storing [enabled]="true" type="custom" [customLoad]="loadState"></dxo-state-storing>
-          <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[5, 10, 20]"></dxo-pager>
-          <dxi-column dataField="OrderNumber" [width]="130" caption="Invoice Number"></dxi-column>
-          <dxi-column dataField="OrderDate" sortOrder="desc" dataType="date"></dxi-column>
-          <dxi-column dataField="SaleAmount" alignment="right" format="currency"></dxi-column>
-          <dxi-column dataField="Employee"></dxi-column>
-          <dxi-column dataField="CustomerStoreCity" caption="City"></dxi-column>
-          <dxi-column dataField="CustomerStoreState" caption="State" [groupIndex]="0"></dxi-column>
-          <dxo-summary>
-            <dxi-total-item *ngFor="let summaryItem of summaryFields"
-                            [column]="summaryItem.dataField"
-                            [summaryType]="summaryItem.type">
-            </dxi-total-item>
-          </dxo-summary>
-        </dx-data-grid>
-
-      <hr/>
-      <p>
-        <button type="button" class="btn btn-warning" (click)="test()">Test</button>
-      </p>
+      <dx-data-grid #dataGrid id="gridContainer"
+                    [dataSource]="orders"
+                    [allowColumnResizing]="true"
+                    [allowColumnReordering]="true"
+                    [showBorders]="true"
+                    keyExpr="ID"
+                    (onContextMenuPreparing)="addMenuItems($event)"
+                    (onToolbarPreparing)="gridToolbarPreparing($event)">
+        <dxo-selection mode="single"></dxo-selection>
+        <dxo-filter-row [visible]="true"></dxo-filter-row>
+        <dxo-group-panel [visible]="true"></dxo-group-panel>
+        <dxo-state-storing [enabled]="true" type="custom" [customLoad]="loadState" [customSave]="saveState"></dxo-state-storing>
+        <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[5, 10, 20]"></dxo-pager>
+        <dxi-column dataField="OrderNumber" [width]="130" caption="Invoice Number"></dxi-column>
+        <dxi-column dataField="OrderDate" sortOrder="desc" dataType="date"></dxi-column>
+        <dxi-column dataField="SaleAmount" alignment="right" format="currency"></dxi-column>
+        <dxi-column dataField="Employee"></dxi-column>
+        <dxi-column dataField="CustomerStoreCity" caption="City"></dxi-column>
+        <dxi-column dataField="CustomerStoreState" caption="State" [groupIndex]="0"></dxi-column>
+        <dxo-summary>
+          <dxi-total-item *ngFor="let summaryItem of summaryFields"
+                          [column]="summaryItem.dataField"
+                          [summaryType]="summaryItem.type">
+          </dxi-total-item>
+        </dxo-summary>
+      </dx-data-grid>
     </div>
   </div>
 </div>
 <dx-popup
-  [width]="500"
-  [height]="350"
+  [width]="400"
+  [height]="250"
   [showTitle]="true"
   title="Görünüm Seç"
   [dragEnabled]="false"
@@ -47,23 +42,40 @@
     <div class="dx-fieldset">
       <div class="dx-field">
         <div class="dx-field-value" style="width: 100%;">
-          <dx-drop-down-box
-            [(value)]="dropdownValue"
-            [dataSource]="dxSelectItems"
-            valueExpr="State"
-            displayExpr="Description"
-            placeholder="Select a view that will applied ...">
-          </dx-drop-down-box>
+          <dx-select-box #selectBox
+                         [items]="gridStates"
+                         displayExpr="stateName"
+                         valueExpr="stateId"
+          ></dx-select-box>
         </div>
       </div>
-      <div class="dx-field">
-        <button class="btn btn-outline-primary btn-sm" style="float: right"><i class="glyphicon glyphicon-saved"></i>Apply</button>
+      <div class="dx-field inner">
+        <div class="left">
+          <dx-button
+            stylingMode="contained"
+            icon="close"
+            text="Cancel"
+            type="danger"
+            [width]="110"
+            (onClick)="Cancel()">
+          </dx-button>
+        </div>
+        <div class="right">
+          <dx-button
+            stylingMode="contained"
+            icon="check"
+            text="Apply"
+            type="success"
+            [width]="110"
+            (onClick)="viewStateSelect()">
+          </dx-button>
+        </div>
       </div>
     </div>
   </div>
 </dx-popup>
 <dx-popup
-  [width]="500"
+  [width]="400"
   [height]="350"
   [showTitle]="true"
   title="Görünüm Kaydet"
@@ -73,12 +85,41 @@
   <div *dxTemplate="let data of 'content'">
     <div class="dx-fieldset">
       <div class="dx-field">
-        <div class="dx-field-value">
-
+        <form [formGroup]="gridViewSaveForm" (ngSubmit)="viewStateSave()">
+          <div *ngIf="!this.alertSaveProcess">
+            <input type="text" formControlName="stateName" class="form-control" placeholder="">
+          </div>
+          <div
+            *ngIf="gridViewSaveFormHolder.stateName.invalid  && (gridViewSaveFormHolder.stateName.dirty || gridViewSaveFormHolder.stateName.touched)"
+            class="alert alert-danger mt-3">
+            <div *ngIf="gridViewSaveFormHolder.stateName.errors.required">State Note is required</div>
+          </div>
+        </form>
+        <div *ngIf="this.alertSaveProcess" class="alert alert-success mt-3">
+          <p>Saving process is successfully done !</p>
         </div>
-      </div><br/>
-      <div class="dx-field">
-        <button class="btn btn-outline-secondary btn-sm" style="float: right"><i class="glyphicon glyphicon-saved"></i>Save</button>
+      </div>
+      <div class="dx-field inner align-bottom" *ngIf="!this.alertSaveProcess">
+        <div class="left">
+          <dx-button
+            stylingMode="contained"
+            icon="close"
+            text="Cancel"
+            type="danger"
+            [width]="110"
+            (onClick)="Cancel()">
+          </dx-button>
+        </div>
+        <div class="right">
+          <dx-button
+            stylingMode="contained"
+            icon="check"
+            text="Save"
+            type="success"
+            [width]="110"
+            (onClick)="viewStateSave()">
+          </dx-button>
+        </div>
       </div>
     </div>
   </div>
